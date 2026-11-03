@@ -1,7 +1,7 @@
 """
-Aerosuite - Main Entry Point
+Aerosuite - Main Interactive Entry Point
 Author: Ximena Lopez Yau
-Description: Core initialization script for aviation management tools.
+Description: Interactive command-line interface for aviation management tools.
 """
 
 from core.aircraft_manager import AircraftManager
@@ -15,29 +15,56 @@ def main():
 	# Inicializar el gestor de flota
 	manager = AircraftManager()
 
-	# 1. Mostrar la flota actual
-	print("\n[INFO] Current Fleet Status:")
-	for aircraft in manager.list_fleet():
-		print(f" - [{aircraft['id']}] {aircraft['model']} | Status: {aircraft['status']} | Location: {aircraft['location']}")
+	while True:
+		print("\n--- Main Menu ---")
+		print("1. View current fleet")
+		print("2. Register a new aircraft")
+		print("3. Search aircraft by ID")
+		print("4. Exit")
 
-	# 2. Agregar una nueva aeronave de prueba
-	print("\n[ACTION] Registering a new aircraft...")
-	manager.add_aircraft("AERO-004", "Bombardier Challenger 350", "Active", "Salt Lake City (SLC)")
+		choice = input("\nSelect an option (1-4): ").strip()
 
-	# 3. Buscar una aeronave específica
-	search_id = "AERO-004"
-	print(f"\n[INFO] Searching for aircraft ID: {search_id}")
-	result = manager.search_by_id(search_id)
-	if result:
-		print(f" -> Found: {result['model']} located in {result['location']} with status '{result['status']}'.")
-	else:
-		print(" -> Aircraft not found.")
+		if choice == "1":
+			print("\n[INFO] Current Fleet Status:")
+			for aircraft in manager.list_fleet():
+				print(
+					f" - [{aircraft['id']}] {aircraft['model']} | "
+					f"Status: {aircraft['status']} | Location: {aircraft['location']}"
+				)
 
-	print("\n" + "=" * 60)
-	print("  Aerosuite execution completed successfully.")
-	print("=" * 60)
+		elif choice == "2":
+			print("\n[ACTION] Register a New Aircraft")
+			plane_id = input("Enter Aircraft ID (e.g., AERO-005): ").strip()
+			model = input("Enter Aircraft Model (e.g., Boeing 787): ").strip()
+			status = input("Enter Status (e.g., Active / Maintenance): ").strip()
+			location = input("Enter Location (e.g., Salt Lake City - SLC): ").strip()
+
+			if plane_id and model and status and location:
+				manager.add_aircraft(plane_id, model, status, location)
+			else:
+				print("[ERROR] All fields are required. Please try again.")
+
+		elif choice == "3":
+			print("\n[ACTION] Search Aircraft")
+			search_id = input("Enter Aircraft ID to search: ").strip()
+			result = manager.search_by_id(search_id)
+			if result:
+				print(
+					f" -> Found: {result['model']} located in {result['location']} "
+					f"with status '{result['status']}'."
+				)
+			else:
+				print(" -> Aircraft not found in the system.")
+
+		elif choice == "4":
+			print("\n" + "=" * 60)
+			print("  Thank you for using Aerosuite. Goodbye!")
+			print("=" * 60)
+			break
+		else:
+			print("[ERROR] Invalid option. Please choose a number between 1 and 4.")
 
 
 if __name__ == "__main__":
 	main()
-
+	
